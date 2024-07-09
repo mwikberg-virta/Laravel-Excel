@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Exceptions\SheetNotFoundException;
 use Maatwebsite\Excel\Tests\Data\Stubs\Database\User;
 use Maatwebsite\Excel\Tests\Data\Stubs\SheetForUsersFromView;
 use Maatwebsite\Excel\Tests\Data\Stubs\SheetWith100Rows;
@@ -16,6 +17,8 @@ use PHPUnit\Framework\Assert;
 
 class WithMultipleSheetsTest extends TestCase
 {
+    private $phpSpreadsheetV2;
+
     /**
      * Setup the test environment.
      */
@@ -96,7 +99,7 @@ class WithMultipleSheetsTest extends TestCase
 
     public function test_unknown_sheet_index_will_throw_sheet_not_found_exception()
     {
-        $this->expectException(\Maatwebsite\Excel\Exceptions\SheetNotFoundException::class);
+        $this->expectException(SheetNotFoundException::class);
         $this->expectExceptionMessage('Your requested sheet index: 9999 is out of bounds. The actual number of sheets is 2.');
 
         $import = new class implements WithMultipleSheets
@@ -117,7 +120,7 @@ class WithMultipleSheetsTest extends TestCase
 
     public function test_unknown_sheet_name_will_throw_sheet_not_found_exception()
     {
-        $this->expectException(\Maatwebsite\Excel\Exceptions\SheetNotFoundException::class);
+        $this->expectException(SheetNotFoundException::class);
         $this->expectExceptionMessage('Your requested sheet name [Some Random Sheet Name] is out of bounds.');
 
         $import = new class implements WithMultipleSheets
@@ -127,6 +130,8 @@ class WithMultipleSheetsTest extends TestCase
             public function sheets(): array
             {
                 return [
+                    'Sheet1' => new class {
+                    },
                     'Some Random Sheet Name' => new class {
                     },
                 ];
@@ -147,6 +152,8 @@ class WithMultipleSheetsTest extends TestCase
             public function sheets(): array
             {
                 return [
+                    'Sheet1' => new class {
+                    },
                     'Some Random Sheet Name' => new class {
                     },
                 ];
@@ -175,6 +182,7 @@ class WithMultipleSheetsTest extends TestCase
             public function sheets(): array
             {
                 return [
+                    'Sheet1' => new class {},
                     'Some Random Sheet Name' => new class implements SkipsUnknownSheets
                     {
                         /**
