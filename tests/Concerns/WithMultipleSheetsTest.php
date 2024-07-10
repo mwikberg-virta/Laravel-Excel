@@ -180,7 +180,8 @@ class WithMultipleSheetsTest extends TestCase
             public function sheets(): array
             {
                 return [
-                    'Sheet1' => new class {},
+                    'Sheet1' => new class {
+                    },
                     'Some Random Sheet Name' => new class implements SkipsUnknownSheets
                     {
                         /**
